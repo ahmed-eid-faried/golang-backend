@@ -28,7 +28,7 @@ func GetAllUsers() (*sql.Rows, error) {
 // UpdateUser updates a user record in the users table
 func UpdateUser(userID int, name string) error {
 	query := fmt.Sprintf("UPDATE users SET name='%s' WHERE id=%d", name, userID)
-	_, err := db.Exec(query)
+	_, err := DB.Exec(query)
 	if err != nil {
 		return err
 	}

@@ -7,13 +7,15 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	_ "github.com/lib/pq"
+	_ "github.com/go-sql-driver/mysql"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
+	// mysqldb "main/core/db/sql"
 	_ "main/docs" // This is required for Swagger to find your documentation
 )
 
+// "main/core/db/sql/mysqldb"
 // User struct represents a user
 type User struct {
 	ID       int    `json:"id"`
@@ -29,23 +31,30 @@ var DB *sql.DB
 // @host localhost:8080
 // @BasePath /api/v1
 func main() {
+
 	Init()
+
 	InitDataBase()
 	router := gin.Default()
+	// Serve static files from the "docs" directory
 	router.Static("/docs", "./docs")
 	v1 := router.Group("/api/v1")
 	{
 		user := v1.Group("/users")
 		{
+			// Routes
 			user.GET("", getUsers)
 			user.POST("", createUser)
 			user.PUT("/:id", updateUser)
 			user.DELETE("/:id", deleteUser)
 		}
 	}
+	// Swagger documentation
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	// Start server
 	router.Run(":8080")
 	defer DB.Close()
+
 }
 
 // @Summary Get all users
@@ -54,11 +63,16 @@ func main() {
 // @Success 200 {array} User
 // @Router /users [get]
 func getUsers(c *gin.Context) {
+
+	// ViewAll("users")
 	var users []User
-	rows, err := DB.Query("SELECT id, username, email FROM users")
+
+	rows, err :=
+		//  ViewAll("users")
+
+		DB.Query("SELECT id, username, email FROM users")
 	if err != nil {
-		log.Println("Error querying users:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error querying users"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	defer rows.Close()
@@ -66,8 +80,7 @@ func getUsers(c *gin.Context) {
 	for rows.Next() {
 		var user User
 		if err := rows.Scan(&user.ID, &user.Username, &user.Email); err != nil {
-			log.Println("Error scanning user row:", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error scanning user row"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		users = append(users, user)
@@ -92,7 +105,7 @@ func createUser(c *gin.Context) {
 		return
 	}
 
-	_, err := DB.Exec("INSERT INTO users (username, email) VALUES ($1, $2)", user.Username, user.Email)
+	_, err := DB.Exec("INSERT INTO users (username, email) VALUES (?, ?)", user.Username, user.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -118,7 +131,7 @@ func updateUser(c *gin.Context) {
 		return
 	}
 
-	_, err := DB.Exec("UPDATE users SET username=$1, email=$2 WHERE id=$3", user.Username, user.Email, id)
+	_, err := DB.Exec("UPDATE users SET username=?, email=? WHERE id=?", user.Username, user.Email, id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -135,7 +148,7 @@ func updateUser(c *gin.Context) {
 func deleteUser(c *gin.Context) {
 	id := c.Param("id")
 
-	_, err := DB.Exec("DELETE FROM users WHERE id=$1", id)
+	_, err := DB.Exec("DELETE FROM users WHERE id=?", id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -144,26 +157,46 @@ func deleteUser(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+// func Init() {
+
+// 	//  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+// 	//	brew update
+// 	//  brew install mysql
+// 	//  brew services start mysql
+// 	//  brew services list
+// 	//  ps aux | grep mysql
+
+// 	// Database connection parameters
+// 	dbDriver := "mysql"
+// 	dbUser := "root"
+// 	dbPass := ""
+// 	dbName := "goblog"
+
+// 	// Open a connection to the database
+// 	connString := fmt.Sprintf("%s:%s@/%s", dbUser, dbPass, dbName)
+// 	var err error
+
+// 	db, err = sql.Open(dbDriver, connString)
+// 	if err != nil {
+// 		log.Fatal("Error opening database connection: %v", err)
+// 	}
+
+// 	// Ping the database to verify the connection
+// 	if err := DBdb.Ping(); err != nil {
+// 		log.Fatal("Error pinging database: %v", err)
+// 	}
+
+//		log.Fatal("Connected to the database")
+//	}
 func Init() {
-	dbDriver := "postgres"
-	dbUser := "amadytech_user"
-	dbPass := "UBp0KyiORwkldz92RWSNJ0Xaus6Xy86Q"
-	dbHost := "dpg-cnlfl4vsc6pc73cdbbb0-a"
-	// dbPort := 5432
-	dbName := "amadytech"
+	// Database connection parameters
+	dbDriver := "mysql"
+	dbUser := "root"
+	dbPass := ""
+	dbName := "goblog"
 
-	// Internal Database URL
-	// postgres://amadytech_user:UBp0KyiORwkldz92RWSNJ0Xaus6Xy86Q@dpg-cnlfl4vsc6pc73cdbbb0-a/amadytech
-	// connString := fmt.Sprintf("postgres://%s:%s@%s:%d/%s", dbUser, dbPass, dbHost, dbPort, dbName)
-	// connString := fmt.Sprintf("postgres://amadytech_user:UBp0KyiORwkldz92RWSNJ0Xaus6Xy86Q@dpg-cnlfl4vsc6pc73cdbbb0-a/amadytech")
-
-	// postgres://amadytech_user:UBp0KyiORwkldz92RWSNJ0Xaus6Xy86Q@dpg-cnlfl4vsc6pc73cdbbb0-a:5432/amadytech?sslmode=disable
-	// connString := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable", dbUser, dbPass, dbHost, dbPort, dbName)
-
-	// External Database URL
-	// postgres://amadytech_user:UBp0KyiORwkldz92RWSNJ0Xaus6Xy86Q@dpg-cnlfl4vsc6pc73cdbbb0-a.frankfurt-postgres.render.com/amadytech
-	// connString := fmt.Sprintf("postgres://amadytech_user:UBp0KyiORwkldz92RWSNJ0Xaus6Xy86Q@dpg-cnlfl4vsc6pc73cdbbb0-a.frankfurt-postgres.render.com/amadytech")
-	connString := fmt.Sprintf("postgres://%s:%s@%s.frankfurt-postgres.render.com/%s", dbUser, dbPass, dbHost, dbName)
+	// Open a connection to MySQL including the database name
+	connString := fmt.Sprintf("%s:%s@tcp(localhost:3306)/%s", dbUser, dbPass, dbName)
 	var err error
 
 	DB, err = sql.Open(dbDriver, connString)
@@ -172,18 +205,21 @@ func Init() {
 		return
 	}
 
+	// Ping the database to verify the connection
 	if err := DB.Ping(); err != nil {
 		log.Fatal("Error pinging database:", err)
 		return
 	}
 
-	rows, err := DB.Query("SELECT datname FROM pg_database WHERE datname = $1", dbName)
+	// Check if the 'goblog' database exists
+	rows, err := DB.Query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", dbName)
 	if err != nil {
 		log.Fatal("Error checking database existence:", err)
 		return
 	}
 	defer rows.Close()
 
+	// If 'goblog' database does not exist, create it
 	if !rows.Next() {
 		_, err := DB.Exec("CREATE DATABASE " + dbName)
 		if err != nil {
@@ -195,8 +231,12 @@ func Init() {
 	log.Println("Connected to the database")
 }
 
+// InitDataBase()
+
 func InitDataBase() {
-	CreateTable("users", "id SERIAL PRIMARY KEY, username VARCHAR(255), email VARCHAR(255)")
+	// CreateTable("users", "id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), email VARCHAR(255)")
+	CreateTable("users", "id, name VARCHAR(255), email VARCHAR(255)")
+
 }
 
 func CreateTable(tableName string, columns string) error {
