@@ -1,0 +1,184 @@
+// package controller
+
+// import (
+// 	"log"
+// 	"net/http"
+//
+//
+
+// 	"github.com/gin-gonic/gin"
+// 	"go.mongodb.org/mongo-driver/bson"
+
+// 	mono "main/core/db/monodb"
+// 	m "main/core/gin/model"
+// 	_ "main/docs" // This is required for Swagger to find your documentation
+// )
+
+// // GetAllEvents retrieves all events from the database.
+// // @Summary Get all events
+// // @Description Retrieve all events
+// // @Tags Events
+// // @Produce json
+// // @Success 200 {array} Event
+// // @Router /events [get]
+// func GetAllEvents(c *gin.Context) {
+// 	events, err := mono.ViewAll("events")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	c.JSON(http.StatusCreated, gin.H{
+// 		"status": http.StatusCreated,
+// 		"data":   events,
+// 	})
+// }
+
+// // GetOneEvent retrieves a specific event by its ID from the database.
+// // @Summary Get a specific event
+// // @Description Retrieve a specific event by its ID
+// // @Tags Events
+// // @Accept json
+// // @Produce json
+// // @Param id path string true "Event ID"
+// // @Success 200 {object} Event
+// // @Router /events/{id} [get]
+// func GetOneEvent(c *gin.Context) {
+// 	eventID := c.Param("id")
+// 	filter := bson.M{"id": eventID}
+// 	event, err := mono.View("events", filter)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	// e, err := Event.FromBSON()
+
+// 	c.JSON(http.StatusCreated, gin.H{
+// 		"status": http.StatusCreated,
+
+// 		"data": event,
+// 	})
+// }
+
+// // CreateEvent creates a new event and adds it to the database.
+// // @Summary Create a new event
+// // @Description Create a new event
+// // @Tags Events
+// // @Accept json
+// // @Produce json
+// // @Param id formData string true "Event ID"
+// // @Param title formData string true "Event Title"
+// // @Param description formData string true "Event Description"
+// // @Success 201 {object} Event
+// // @Router /events [post]
+// func CreateEvent(c *gin.Context) {
+// 	var event m.Event
+
+// 	// Bind the request body to the event struct
+// 	if err := c.ShouldBindJSON(&event); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
+
+// 	// // Check if required fields are empty
+// 	// if event.ID == "" || event.Title == "" || event.Description == "" {
+// 	// 	c.JSON(http.StatusBadRequest, gin.H{
+// 	// 		"error": "id, title, and description cannot be empty",
+// 	// 	})
+// 	// 	return
+// 	// }
+
+// 	// Create a map for the event data
+// 	// eventData := bson.M{"id": event.ID, "title": event.Title, "description": event.Description}
+
+// 	// Attempt to insert the event data into the database
+// 	if err := mono.Create("events", event.ToBSON()); err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create event"})
+// 		return
+// 	}
+
+// 	// If insertion was successful, return a success response
+// 	c.JSON(http.StatusCreated, gin.H{
+// 		"status":  http.StatusCreated,
+// 		"message": "New event was created",
+// 		"event":   event.ToBSON(),
+// 	})
+// }
+
+// // UpdateEvent updates an existing event in the database.
+// // @Summary Update an event
+// // @Description Update an existing event by its ID
+// // @Tags Events
+// // @Accept json
+// // @Produce json
+// // @Param id path string true "Event ID"
+// // @Param id formData string true "Event ID"
+// // @Param title formData string true "Event Title"
+// // @Param description formData string true "Event Description"
+// // @Success 200 {object} Event
+// // @Router /events/{id} [put]
+// func UpdateEvent(c *gin.Context) {
+// 	eventID := c.Param("id")
+
+// 	id := c.PostForm("id")
+// 	title := c.PostForm("title")
+// 	description := c.PostForm("description")
+
+// 	filter := bson.M{"id": eventID}
+// 	update := bson.M{"$set": bson.M{"id": id, "title": title, "description": description}}
+
+// 	err := mono.Update("events", filter, update)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	c.JSON(http.StatusCreated, gin.H{
+// 		"status":  http.StatusCreated,
+// 		"message": "Event was updated successfully",
+// 	})
+// }
+
+// // DeleteEvent deletes an existing event from the database.
+// // @Summary Delete an event
+// // @Description Delete an existing event by its ID
+// // @Tags Events
+// // @Accept json
+// // @Produce json
+// // @Param id path string true "Event ID"
+// // @Success 200 {string} string
+// // @Router /events/{id} [delete]
+// func DeleteEvent(c *gin.Context) {
+// 	eventID := c.Param("id")
+// 	filter := bson.M{"id": eventID}
+
+// 	err := mono.Delete("events", filter)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	c.JSON(http.StatusCreated, gin.H{
+// 		"status":  http.StatusCreated,
+// 		"message": "Event has been deleted successfully",
+// 	})
+// }
+
+// // func GetAllEvents(c *gin.Context) {
+// // 	events, err := mono.ViewAll("events")
+// // 	if err != nil {
+// // 		log.Fatal(err)
+// // 		return
+// // 	}
+
+// // 	var responseEvents []Event
+// // 	for _, event := range events {
+// // 		var e Event
+// // 		e.FromBSON(event)
+// // 		responseEvents = append(responseEvents, e)
+// // 	}
+// // 	// Convert events to JSON
+// // 	jsonData, err := json.Marshal(responseEvents)
+// // 	if err != nil {
+// // 		log.Fatal(err)
+// // 		return
+// // 	}
+// // 	c.JSON(200, gin.H{
+// // 		"data": jsonData,
+// // 	})
+// // }

@@ -1,0 +1,65 @@
+// package main
+
+// import (
+//
+//
+
+// 	"github.com/gin-gonic/gin"
+// 	swaggerFiles "github.com/swaggo/files"
+// 	ginSwagger "github.com/swaggo/gin-swagger"
+
+// 	mono "main/core/db/monodb"
+// 	"main/core/gin/controller"
+// 	_ "main/docs" // This is required for Swagger to find your documentation
+// )
+// // swag init
+
+// // @title Event Management API
+// // @description This is a sample API for managing events.
+// // @version 1.0
+// // @host localhost:8000
+// // @BasePath /api/v1
+// func main() {
+// 	// Initialize MongoDB connection
+// 	mono.Init()
+
+// 	r := gin.Default()
+
+// 	// Serve static files from the "docs" directory
+// 	r.Static("/docs", "./docs")
+
+// 	// Swagger routes
+// 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+// 	v1 := r.Group("/api/v1")
+// 	{
+
+// 		event := v1.Group("/events")
+// 		{
+// 			event.GET("", controller.GetAllEvents)
+// 			event.GET("/:id", controller.GetOneEvent)
+// 			event.POST("", controller.CreateEvent)
+// 			event.PUT("/:id", controller.UpdateEvent)
+// 			event.DELETE("/:id", controller.DeleteEvent)
+// 		}
+
+// 		// v1.GET("/ggg", ddd)
+// 	}
+
+// 	// Run the server
+// 	r.Run(":8000")
+// }
+
+// // Additional endpoint
+// // @Summary Example endpoint
+// // @Description Example endpoint description
+// // @Accept json
+// // @Produce json
+// // @Success 200 {object} gin.H
+// // @Router /ggg [get]
+// // func ddd(c *gin.Context) {
+
+// // 	c.JSON(200, gin.H{
+// // 		"status":  200,
+// // 		"message": "Event has been deleted successfully"})
+// // }

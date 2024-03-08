@@ -1,0 +1,15 @@
+package main
+
+import (
+	"net/http"
+)
+
+func main() {
+
+	// http.HandleFunc("/", homeHandler)
+	// http.HandleFunc("/todos", todosHandler)
+	http.ListenAndServe(":8080", nil)
+}
+
+// http://localhost:8080
+// http://localhost:8080/todos

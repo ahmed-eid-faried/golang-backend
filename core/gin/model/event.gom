@@ -1,0 +1,75 @@
+// package gin
+// import(
+
+// 	"go.mongodb.org/mongo-driver/bson"
+
+// 	_ "main/docs" // This is required for Swagger to find your documentation
+// )
+
+
+// // Event represents an event object
+// type Event struct {
+// 	ID          int    `json:"id,omitempty" bson:"id,omitempty"`
+// 	Title       string `json:"title,omitempty" bson:"title,omitempty"`
+// 	Description string `json:"description,omitempty" bson:"description,omitempty"`
+// }
+
+// // GetAllEvents retrieves all events from the database.
+// // @Summary Get all events
+// // @Description Retrieve all events
+// // @Tags Events
+// // type Event struct {
+// //     ID          string `json:"id"`
+// //     Title       string `json:"title"`
+// //     Description string `json:"description"`
+// // }
+
+// // func (e *Event) ToBSON() bson.M {
+// //     return bson.M{
+// //         "id":          e.ID,
+// //         "title":       e.Title,
+// //         "description": e.Description,
+// //     }
+// // }
+
+// // ToBSON converts Event struct to bson.M
+// func (e *Event) ToBSON() bson.M {
+// 	return bson.M{
+// 		"id":         e.ID,
+// 		"title":       e.Title,
+// 		"description": e.Description,
+// 	}
+// }
+
+// // FromBSON converts bson.M to Event struct
+// func (e *Event) FromBSON(data bson.M) {
+// 	if id, ok := data["id"].(int); ok {
+// 		e.ID = id
+// 	}
+// 	if title, ok := data["title"].(string); ok {
+// 		e.Title = title
+// 	}
+// 	if description, ok := data["description"].(string); ok {
+// 		e.Description = description
+// 	}
+// }
+
+// // EventsToBSON converts a slice of Event structs to a slice of bson.M
+// func EventsToBSON(events []Event) []bson.M {
+// 	var bsonEvents []bson.M
+// 	for _, event := range events {
+// 		bsonEvents = append(bsonEvents, event.ToBSON())
+// 	}
+// 	return bsonEvents
+// }
+
+// // EventsFromBSON converts a slice of bson.M to a slice of Event structs
+// func EventsFromBSON(bsonEvents []bson.M) []Event {
+// 	var events []Event
+// 	for _, bsonEvent := range bsonEvents {
+// 		var event Event
+// 		event.FromBSON(bsonEvent)
+// 		events = append(events, event)
+// 	}
+// 	return events
+// }
