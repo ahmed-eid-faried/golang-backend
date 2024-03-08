@@ -23,15 +23,12 @@ type User struct {
 
 var db *sql.DB
 
-
-
 // @title User API
 // @description API for user management
 // @version 1.0
 // @host localhost:8080
 // @BasePath /api/v1
 func main() {
-
 
 	Init()
 	router := gin.Default()
