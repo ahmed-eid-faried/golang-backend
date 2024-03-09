@@ -1,4 +1,4 @@
-package mysqldb
+package sqldb
 
 import (
 	"database/sql"
@@ -99,3 +99,133 @@ func GetAllAddresses() (*sql.Rows, error) {
 // ///////////////////////////// /////////// ///////////////////////////////////////
 // ///////////////////////////// /////////// ///////////////////////////////////////
 // ///////////////////////////// /////////// ///////////////////////////////////////
+// func example() {
+// 	groupByRows, err := GroupBy("orders", "customer_id")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	// Process grouped rows...
+
+// 	havingRows, err := Having("sales", "SUM(amount) > 1000")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	// Process rows with having clause...
+
+// 	exists, err := Exists("SELECT id FROM users WHERE age > 18")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	if exists {
+// 		fmt.Println("At least one user is above 18 years old")
+// 	} else {
+// 		fmt.Println("No user is above 18 years old")
+// 	}
+
+// 	insert, err := InsertIntoSelect("new_table", "SELECT * FROM old_table WHERE condition")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	caseRows, err := CaseStatement("employees", "salary", "WHEN salary > 50000")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	// Example usage with ANY syntax in SELECT statement
+// 	anyRows, err := AnySyntaxWithSelect("products", "price", "<", "SELECT avg_price FROM average_prices")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	// Process rows...
+
+// 	// Example usage with ALL syntax in SELECT statement
+// 	allRows, err := AllSyntaxWithSelect("employees", "salary", ">", "SELECT min_salary FROM salary_ranges")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	// Process rows...
+
+// 	// Example usage with ANY syntax in WHERE clause
+// 	anyWhereRows, err := AnySyntaxWithWhere("orders", "total_amount", "<", "SELECT max_amount FROM thresholds")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	// Process rows...
+
+// 	// Example usage with ALL syntax in WHERE clause
+// 	allWhereRows, err := AllSyntaxWithWhere("transactions", "amount", ">", "SELECT min_amount FROM thresholds")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	// Example usage with LIKE operator
+// 	likeRows, err := LikeOperator("products", "name", "App%")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	// Process rows...
+
+// 	// Example usage with IN operator
+// 	inRows, err := InOperator("employees", "department_id", []interface{}{1, 2, 3})
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	// Process rows...
+
+// 	// Example usage with BETWEEN operator
+// 	betweenRows, err := BetweenOperator("orders", "total_amount", 100, 500)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	// Process rows...
+
+// 	// Example usage with Aliases
+// 	aliasRows, err := Aliases("employees", "EmpDetails", []string{"name", "salary"})
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	// Process rows...
+
+// 	// Example usage with Join
+// 	joinRows, err := Join("orders", "customers", "orders.customer_id = customers.id")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	// Example usage of creating a database
+// 	err3 := CreateDatabase("new_database")
+// 	if err3 != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	// Example usage of dropping a database
+// 	err4 := DropDatabase("old_database")
+// 	if err4 != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	// Example usage of creating a table
+// 	err5 := CreateTable("users", "id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), age INT")
+// 	if err5 != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	// Example usage of dropping a table
+// 	err6 := DropTable("old_table")
+// 	if err6 != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	// Example usage of altering a table
+// 	err7 := AlterTable("users", "ADD COLUMN email VARCHAR(255)")
+// 	if err7 != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	// Example usage of creating a view
+// 	err8 := CreateView("view_name", "SELECT * FROM users WHERE age > 18")
+// 	if err8 != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	fmt.Println(groupByRows, havingRows, insert, caseRows, joinRows, aliasRows, betweenRows, inRows, likeRows, allWhereRows, anyWhereRows, anyRows, allRows, likeRows)
+
+// }

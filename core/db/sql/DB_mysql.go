@@ -1,40 +1,16 @@
-package mysqldb
+package sqldb
 
 import (
 	"database/sql"
 	"fmt"
-	"log"
 )
-
-var DB *sql.DB
-var err error
-
-// Init initializes the database connection
-func Init() {
-	// Database connection parameters
-	dbDriver := "mysql"
-	dbUser := "root"
-	dbPass := ""
-	dbName := "goblog"
-
-	// Open a connection to the database
-	DB, err = sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-// Close closes the database connection
-func Close() {
-	DB.Close()
-}
 
 // CreateTable creates a table in the database
 func CreateTable(tableName string, columns string) error {
 	query := fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (%s)", tableName, columns)
 	_, err := DB.Exec(query)
 	if err != nil {
-		return err
+		return fmt.Errorf("error creating table %s: %w", tableName, err)
 	}
 	return nil
 }
@@ -44,7 +20,7 @@ func Insert(tableName string, values string) error {
 	query := fmt.Sprintf("INSERT INTO %s VALUES (%s)", tableName, values)
 	_, err := DB.Exec(query)
 	if err != nil {
-		return err
+		return fmt.Errorf("error inserting into table %s: %w", tableName, err)
 	}
 	return nil
 }
@@ -54,7 +30,7 @@ func Update(tableName string, setValues string, condition string) error {
 	query := fmt.Sprintf("UPDATE %s SET %s WHERE %s", tableName, setValues, condition)
 	_, err := DB.Exec(query)
 	if err != nil {
-		return err
+		return fmt.Errorf("error updating table %s: %w", tableName, err)
 	}
 	return nil
 }
@@ -64,7 +40,7 @@ func Delete(tableName string, condition string) error {
 	query := fmt.Sprintf("DELETE FROM %s WHERE %s", tableName, condition)
 	_, err := DB.Exec(query)
 	if err != nil {
-		return err
+		return fmt.Errorf("error deleting from table %s: %w", tableName, err)
 	}
 	return nil
 }
@@ -73,7 +49,7 @@ func Delete(tableName string, condition string) error {
 func ExecuteQuery(query string) (*sql.Rows, error) {
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error executing query: %w", err)
 	}
 	return rows, nil
 }
@@ -83,7 +59,7 @@ func Search(tableName string, condition string) (*sql.Rows, error) {
 	query := fmt.Sprintf("SELECT * FROM %s WHERE %s", tableName, condition)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error searching in table %s: %w", tableName, err)
 	}
 	return rows, nil
 }
@@ -93,22 +69,19 @@ func ViewAll(tableName string) (*sql.Rows, error) {
 	query := fmt.Sprintf("SELECT * FROM %s", tableName)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error viewing all records from table %s: %w", tableName, err)
 	}
 	return rows, nil
 }
 
 // AddRelation creates a relationship between two tables based on foreign key constraints
 func AddRelation(parentTable, parentColumn, childTable, childColumn string) error {
-	// Construct the SQL query to add a foreign key constraint
 	query := fmt.Sprintf("ALTER TABLE %s ADD CONSTRAINT fk_%s_%s FOREIGN KEY (%s) REFERENCES %s(%s) ON DELETE CASCADE",
 		childTable, parentTable, childTable, childColumn, parentTable, parentColumn)
-	// Execute the query
 	_, err := DB.Exec(query)
 	if err != nil {
-		return err
+		return fmt.Errorf("error adding relation: %w", err)
 	}
-
 	return nil
 }
 
@@ -117,7 +90,7 @@ func CreateTableIfNotExists(tableName string, columns string) error {
 	query := fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (%s)", tableName, columns)
 	_, err := DB.Exec(query)
 	if err != nil {
-		return err
+		return fmt.Errorf("error creating table if not exists %s: %w", tableName, err)
 	}
 	return nil
 }
@@ -127,7 +100,7 @@ func DropTableIfExists(tableName string) error {
 	query := fmt.Sprintf("DROP TABLE IF EXISTS %s", tableName)
 	_, err := DB.Exec(query)
 	if err != nil {
-		return err
+		return fmt.Errorf("error dropping table if exists %s: %w", tableName, err)
 	}
 	return nil
 }
@@ -137,7 +110,7 @@ func TruncateTable(tableName string) error {
 	query := fmt.Sprintf("TRUNCATE TABLE %s", tableName)
 	_, err := DB.Exec(query)
 	if err != nil {
-		return err
+		return fmt.Errorf("error truncating table %s: %w", tableName, err)
 	}
 	return nil
 }
@@ -148,7 +121,7 @@ func CountRows(tableName string) (int, error) {
 	var count int
 	err := DB.QueryRow(query).Scan(&count)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("error counting rows in table %s: %w", tableName, err)
 	}
 	return count, nil
 }
@@ -157,7 +130,7 @@ func CountRows(tableName string) (int, error) {
 func ExecuteNonQuery(query string) (sql.Result, error) {
 	result, err := DB.Exec(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error executing non-query: %w", err)
 	}
 	return result, nil
 }
@@ -168,7 +141,7 @@ func MaxValue(tableName, columnName string) (interface{}, error) {
 	query := fmt.Sprintf("SELECT MAX(%s) FROM %s", columnName, tableName)
 	err := DB.QueryRow(query).Scan(&maxVal)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error getting max value of column %s in table %s: %w", columnName, tableName, err)
 	}
 	fmt.Println("Max ", columnName, ":", maxVal)
 
@@ -181,7 +154,7 @@ func MinValue(tableName, columnName string) (interface{}, error) {
 	query := fmt.Sprintf("SELECT MIN(%s) FROM %s", columnName, tableName)
 	err := DB.QueryRow(query).Scan(&minVal)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error getting min value of column %s in table %s: %w", columnName, tableName, err)
 	}
 	fmt.Println("Min ", columnName, ":", minVal)
 
@@ -194,7 +167,7 @@ func SumValue(tableName, columnName string) (float64, error) {
 	query := fmt.Sprintf("SELECT SUM(%s) FROM %s", columnName, tableName)
 	err := DB.QueryRow(query).Scan(&sumVal)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("error getting sum value of column %s in table %s: %w", columnName, tableName, err)
 	}
 	fmt.Println("Sum ", columnName, ":", sumVal)
 
@@ -207,7 +180,7 @@ func AverageValue(tableName, columnName string) (float64, error) {
 	query := fmt.Sprintf("SELECT AVG(%s) FROM %s", columnName, tableName)
 	err := DB.QueryRow(query).Scan(&avgVal)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("error getting average value of column %s in table %s: %w", columnName, tableName, err)
 	}
 	fmt.Println("AvgVal ", columnName, ":", avgVal)
 
@@ -219,7 +192,7 @@ func OrderBy(tableName, orderByColumn string) (*sql.Rows, error) {
 	query := fmt.Sprintf("SELECT * FROM %s ORDER BY %s", tableName, orderByColumn)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error ordering by column %s in table %s: %w", orderByColumn, tableName, err)
 	}
 	return rows, nil
 }
@@ -229,7 +202,7 @@ func LimitSELECT(tableName string, limit int) (*sql.Rows, error) {
 	query := fmt.Sprintf("SELECT * FROM %s LIMIT %d", tableName, limit)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error limiting rows in table %s: %w", tableName, err)
 	}
 	return rows, nil
 }
@@ -239,7 +212,7 @@ func InnerJoin(table1, table2, condition string) (*sql.Rows, error) {
 	query := fmt.Sprintf("SELECT * FROM %s INNER JOIN %s ON %s", table1, table2, condition)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error performing inner join between tables %s and %s: %w", table1, table2, err)
 	}
 	return rows, nil
 }
@@ -249,7 +222,7 @@ func LeftJoin(table1, table2, condition string) (*sql.Rows, error) {
 	query := fmt.Sprintf("SELECT * FROM %s LEFT JOIN %s ON %s", table1, table2, condition)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error performing left join between tables %s and %s: %w", table1, table2, err)
 	}
 	return rows, nil
 }
@@ -259,7 +232,7 @@ func RightJoin(table1, table2, condition string) (*sql.Rows, error) {
 	query := fmt.Sprintf("SELECT * FROM %s RIGHT JOIN %s ON %s", table1, table2, condition)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error performing right join between tables %s and %s: %w", table1, table2, err)
 	}
 	return rows, nil
 }
@@ -269,7 +242,7 @@ func CrossJoin(table1, table2 string) (*sql.Rows, error) {
 	query := fmt.Sprintf("SELECT * FROM %s CROSS JOIN %s", table1, table2)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error performing cross join between tables %s and %s: %w", table1, table2, err)
 	}
 	return rows, nil
 }
@@ -279,7 +252,7 @@ func SelfJoin(tableName, condition string) (*sql.Rows, error) {
 	query := fmt.Sprintf("SELECT * FROM %s AS t1 JOIN %s AS t2 ON %s", tableName, tableName, condition)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error performing self join on table %s: %w", tableName, err)
 	}
 	return rows, nil
 }
@@ -289,7 +262,7 @@ func Union(query1, query2 string) (*sql.Rows, error) {
 	unionQuery := fmt.Sprintf("%s UNION %s", query1, query2)
 	rows, err := DB.Query(unionQuery)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error performing union operation: %w", err)
 	}
 	return rows, nil
 }
@@ -299,7 +272,7 @@ func GroupBy(tableName, groupByColumn string) (*sql.Rows, error) {
 	query := fmt.Sprintf("SELECT * FROM %s GROUP BY %s", tableName, groupByColumn)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error grouping by column %s in table %s: %w", groupByColumn, tableName, err)
 	}
 	return rows, nil
 }
@@ -309,7 +282,7 @@ func Having(tableName, condition string) (*sql.Rows, error) {
 	query := fmt.Sprintf("SELECT * FROM %s HAVING %s", tableName, condition)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error using HAVING clause in table %s: %w", tableName, err)
 	}
 	return rows, nil
 }
@@ -320,7 +293,7 @@ func Exists(subQuery string) (bool, error) {
 	query := fmt.Sprintf("SELECT EXISTS (%s)", subQuery)
 	err := DB.QueryRow(query).Scan(&exists)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("error checking existence: %w", err)
 	}
 	return exists, nil
 }
@@ -330,7 +303,7 @@ func InsertIntoSelect(targetTable, selectQuery string) (sql.Result, error) {
 	query := fmt.Sprintf("INSERT INTO %s %s", targetTable, selectQuery)
 	result, err := DB.Exec(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error inserting into table %s from select query: %w", targetTable, err)
 	}
 	return result, nil
 }
@@ -340,7 +313,7 @@ func CaseStatement(tableName, columnName, condition string) (*sql.Rows, error) {
 	query := fmt.Sprintf("SELECT *, CASE %s WHEN %s THEN 'Condition True' ELSE 'Condition False' END AS result FROM %s", columnName, condition, tableName)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error using CASE statement in table %s: %w", tableName, err)
 	}
 	return rows, nil
 }
@@ -350,7 +323,7 @@ func LikeOperator(tableName, columnName, pattern string) (*sql.Rows, error) {
 	query := fmt.Sprintf("SELECT * FROM %s WHERE %s LIKE '%s'", tableName, columnName, pattern)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error using LIKE operator in table %s: %w", tableName, err)
 	}
 	return rows, nil
 }
@@ -367,7 +340,7 @@ func InOperator(tableName, columnName string, values []interface{}) (*sql.Rows, 
 	query += ")"
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error using IN operator in table %s: %w", tableName, err)
 	}
 	return rows, nil
 }
@@ -377,7 +350,7 @@ func BetweenOperator(tableName, columnName string, lower, upper interface{}) (*s
 	query := fmt.Sprintf("SELECT * FROM %s WHERE %s BETWEEN '%v' AND '%v'", tableName, columnName, lower, upper)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error using BETWEEN operator in table %s: %w", tableName, err)
 	}
 	return rows, nil
 }
@@ -390,7 +363,7 @@ func Aliases(tableName, aliasName string, columnNames []string) (*sql.Rows, erro
 	}
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error using aliases in table %s: %w", tableName, err)
 	}
 	return rows, nil
 }
@@ -400,7 +373,7 @@ func Join(table1, table2, joinCondition string) (*sql.Rows, error) {
 	query := fmt.Sprintf("SELECT * FROM %s JOIN %s ON %s", table1, table2, joinCondition)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error performing join between tables %s and %s: %w", table1, table2, err)
 	}
 	return rows, nil
 }
@@ -410,7 +383,7 @@ func AnySyntaxWithSelect(tableName, columnName, operator, subQuery string) (*sql
 	query := fmt.Sprintf("SELECT * FROM %s WHERE %s %s ANY (%s)", tableName, columnName, operator, subQuery)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error using ANY syntax with SELECT statement in table %s: %w", tableName, err)
 	}
 	return rows, nil
 }
@@ -420,7 +393,7 @@ func AllSyntaxWithSelect(tableName, columnName, operator, subQuery string) (*sql
 	query := fmt.Sprintf("SELECT * FROM %s WHERE %s %s ALL (%s)", tableName, columnName, operator, subQuery)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error using ALL syntax with SELECT statement in table %s: %w", tableName, err)
 	}
 	return rows, nil
 }
@@ -430,7 +403,7 @@ func AnySyntaxWithWhere(tableName, columnName, operator, values string) (*sql.Ro
 	query := fmt.Sprintf("SELECT * FROM %s WHERE %s %s ANY (%s)", tableName, columnName, operator, values)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error using ANY syntax with WHERE clause in table %s: %w", tableName, err)
 	}
 	return rows, nil
 }
@@ -440,7 +413,7 @@ func AllSyntaxWithWhere(tableName, columnName, operator, values string) (*sql.Ro
 	query := fmt.Sprintf("SELECT * FROM %s WHERE %s %s ALL (%s)", tableName, columnName, operator, values)
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error using ALL syntax with WHERE clause in table %s: %w", tableName, err)
 	}
 	return rows, nil
 }
@@ -449,164 +422,48 @@ func AllSyntaxWithWhere(tableName, columnName, operator, values string) (*sql.Ro
 func CreateDatabase(dbName string) error {
 	query := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", dbName)
 	_, err := DB.Exec(query)
-	return err
+	if err != nil {
+		return fmt.Errorf("error creating database %s: %w", dbName, err)
+	}
+	return nil
 }
 
 // DropDatabase deletes the database with the given name
 func DropDatabase(dbName string) error {
 	query := fmt.Sprintf("DROP DATABASE IF EXISTS %s", dbName)
 	_, err := DB.Exec(query)
-	return err
+	if err != nil {
+		return fmt.Errorf("error dropping database %s: %w", dbName, err)
+	}
+	return nil
 }
 
 // DropTable deletes the table with the given name
 func DropTable(tableName string) error {
 	query := fmt.Sprintf("DROP TABLE IF EXISTS %s", tableName)
 	_, err := DB.Exec(query)
-	return err
+	if err != nil {
+		return fmt.Errorf("error dropping table %s: %w", tableName, err)
+	}
+	return nil
 }
 
 // AlterTable modifies the structure of an existing table
-func AlterTable(tableName, alterStatement string) error {
-	query := fmt.Sprintf("ALTER TABLE %s %s", tableName, alterStatement)
+func AlterTable(tableName, action string) error {
+	query := fmt.Sprintf("ALTER TABLE %s %s", tableName, action)
 	_, err := DB.Exec(query)
-	return err
+	if err != nil {
+		return fmt.Errorf("error altering table %s: %w", tableName, err)
+	}
+	return nil
 }
 
 // CreateView creates a new view in the database
 func CreateView(viewName, query string) error {
-	query = fmt.Sprintf("CREATE VIEW %s AS %s", viewName, query)
-	_, err := DB.Exec(query)
-	return err
-}
-
-func example() {
-	groupByRows, err := GroupBy("orders", "customer_id")
+	createQuery := fmt.Sprintf("CREATE VIEW IF NOT EXISTS %s AS %s", viewName, query)
+	_, err := DB.Exec(createQuery)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("error creating view %s: %w", viewName, err)
 	}
-	// Process grouped rows...
-
-	havingRows, err := Having("sales", "SUM(amount) > 1000")
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Process rows with having clause...
-
-	exists, err := Exists("SELECT id FROM users WHERE age > 18")
-	if err != nil {
-		log.Fatal(err)
-	}
-	if exists {
-		fmt.Println("At least one user is above 18 years old")
-	} else {
-		fmt.Println("No user is above 18 years old")
-	}
-
-	insert, err := InsertIntoSelect("new_table", "SELECT * FROM old_table WHERE condition")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	caseRows, err := CaseStatement("employees", "salary", "WHEN salary > 50000")
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Example usage with ANY syntax in SELECT statement
-	anyRows, err := AnySyntaxWithSelect("products", "price", "<", "SELECT avg_price FROM average_prices")
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Process rows...
-
-	// Example usage with ALL syntax in SELECT statement
-	allRows, err := AllSyntaxWithSelect("employees", "salary", ">", "SELECT min_salary FROM salary_ranges")
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Process rows...
-
-	// Example usage with ANY syntax in WHERE clause
-	anyWhereRows, err := AnySyntaxWithWhere("orders", "total_amount", "<", "SELECT max_amount FROM thresholds")
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Process rows...
-
-	// Example usage with ALL syntax in WHERE clause
-	allWhereRows, err := AllSyntaxWithWhere("transactions", "amount", ">", "SELECT min_amount FROM thresholds")
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Example usage with LIKE operator
-	likeRows, err := LikeOperator("products", "name", "App%")
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Process rows...
-
-	// Example usage with IN operator
-	inRows, err := InOperator("employees", "department_id", []interface{}{1, 2, 3})
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Process rows...
-
-	// Example usage with BETWEEN operator
-	betweenRows, err := BetweenOperator("orders", "total_amount", 100, 500)
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Process rows...
-
-	// Example usage with Aliases
-	aliasRows, err := Aliases("employees", "EmpDetails", []string{"name", "salary"})
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Process rows...
-
-	// Example usage with Join
-	joinRows, err := Join("orders", "customers", "orders.customer_id = customers.id")
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Example usage of creating a database
-	err3 := CreateDatabase("new_database")
-	if err3 != nil {
-		log.Fatal(err)
-	}
-
-	// Example usage of dropping a database
-	err4 := DropDatabase("old_database")
-	if err4 != nil {
-		log.Fatal(err)
-	}
-
-	// Example usage of creating a table
-	err5 := CreateTable("users", "id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), age INT")
-	if err5 != nil {
-		log.Fatal(err)
-	}
-
-	// Example usage of dropping a table
-	err6 := DropTable("old_table")
-	if err6 != nil {
-		log.Fatal(err)
-	}
-
-	// Example usage of altering a table
-	err7 := AlterTable("users", "ADD COLUMN email VARCHAR(255)")
-	if err7 != nil {
-		log.Fatal(err)
-	}
-
-	// Example usage of creating a view
-	err8 := CreateView("view_name", "SELECT * FROM users WHERE age > 18")
-	if err8 != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println(groupByRows, havingRows, insert, caseRows, joinRows, aliasRows, betweenRows, inRows, likeRows, allWhereRows, anyWhereRows, anyRows, allRows, likeRows)
-
+	return nil
 }

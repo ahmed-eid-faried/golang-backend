@@ -28,7 +28,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/main.User"
+                                "$ref": "#/definitions/user.User"
                             }
                         }
                     }
@@ -45,25 +45,13 @@ const docTemplate = `{
                 "summary": "Create a user",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "ID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Username",
-                        "name": "Username",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Email",
-                        "name": "Email",
-                        "in": "path",
-                        "required": true
+                        "description": "User object",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.User"
+                        }
                     }
                 ],
                 "responses": {
@@ -71,9 +59,74 @@ const docTemplate = `{
                         "description": "Created"
                     }
                 }
+            },
+            "delete": {
+                "description": "Remove all users from the database",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Remove all users",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/users/search": {
+            "get": {
+                "description": "Search users by username or email",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Search users",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search keyword (username or email)",
+                        "name": "keyword",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/user.User"
+                            }
+                        }
+                    }
+                }
             }
         },
         "/users/{id}": {
+            "get": {
+                "description": "Get a user by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get a user by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.User"
+                        }
+                    }
+                }
+            },
             "put": {
                 "description": "Update a user by ID",
                 "consumes": [
@@ -97,7 +150,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/main.User"
+                            "$ref": "#/definitions/user.User"
                         }
                     }
                 ],
@@ -128,7 +181,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "main.User": {
+        "user.User": {
             "type": "object",
             "properties": {
                 "email": {
