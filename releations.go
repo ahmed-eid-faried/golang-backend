@@ -2,6 +2,7 @@ package main
 
 import (
 	// sqldb "main/core/db/sql"
+	address "main/features/address"
 	user "main/features/user"
 )
 
@@ -9,7 +10,8 @@ import (
 
 // CreateTables creates both users and addresses tables and establishes a relationship between them
 func InitDataBase() error {
-	user.InitDataUsers()
+	user.InitData()
+	address.InitData()
 
 	// sqldb.AddRelation("users", "id", "addresses", "user_id")
 

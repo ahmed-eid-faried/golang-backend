@@ -21,6 +21,7 @@ import (
 // @Produce json
 // @Success 200 {array} User
 // @Router /users [get]
+// @Tags User
 func GetUsers(c *gin.Context) {
 	var users []User
 	rows, err := sqldb.DB.Query("SELECT * FROM users")
@@ -50,6 +51,7 @@ func GetUsers(c *gin.Context) {
 // @Param id path int true "User ID"
 // @Success 200 {object} User
 // @Router /users/{id} [get]
+// @Tags User
 func GetUserByID(c *gin.Context) {
 	id := c.Param("id")
 	var user User
@@ -73,6 +75,7 @@ func GetUserByID(c *gin.Context) {
 // @Param user body User true "User object"
 // @Success 201
 // @Router /users [post]
+// @Tags User
 func CreateUser(c *gin.Context) {
 	// // @Param Username path string true "Username"
 	// // @Param Email path string true "Email"
@@ -105,6 +108,7 @@ func CreateUser(c *gin.Context) {
 // @Param user body User true "User object"
 // @Success 200
 // @Router /users/{id} [put]
+// @Tags User
 func UpdateUser(c *gin.Context) {
 	id := c.Param("id")
 
@@ -128,6 +132,7 @@ func UpdateUser(c *gin.Context) {
 // @Param id path int true "User ID"
 // @Success 200
 // @Router /users/{id} [delete]
+// @Tags User
 func DeleteUser(c *gin.Context) {
 	id := c.Param("id")
 	_, err := sqldb.DB.Exec("DELETE FROM users WHERE id=$1", id)
@@ -144,6 +149,7 @@ func DeleteUser(c *gin.Context) {
 // @Produce json
 // @Success 204
 // @Router /users [delete]
+// @Tags User
 func DeleteAllUsers(c *gin.Context) {
 	_, err := sqldb.DB.Exec("DELETE FROM users")
 	if err != nil {
@@ -161,6 +167,7 @@ func DeleteAllUsers(c *gin.Context) {
 // @Param keyword query string true "Search keyword (username or email)"
 // @Success 200 {array} User
 // @Router /users/search [get]
+// @Tags User
 func SearchUsers(c *gin.Context) {
 	keyword := c.Query("keyword")
 	if keyword == "" {

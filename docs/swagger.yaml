@@ -1,5 +1,37 @@
 basePath: /api/v1
 definitions:
+  address.Address:
+    properties:
+      city:
+        example: Example City
+        type: string
+      id:
+        example: 1
+        format: int32
+        type: integer
+      postal_code:
+        example: "12345"
+        type: string
+      state:
+        example: Example State
+        type: string
+      street:
+        example: 123 Example St.
+        type: string
+      user_id:
+        example: 1
+        format: int32
+        type: integer
+    type: object
+  message.User:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      username:
+        type: string
+    type: object
   user.User:
     properties:
       email:
@@ -16,6 +48,284 @@ info:
   title: User API
   version: "1.0"
 paths:
+  /address:
+    delete:
+      description: Remove all Addresses from the database
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      summary: Remove all Address
+      tags:
+      - Address
+    get:
+      description: Get all Addresses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/address.Address'
+            type: array
+      summary: Get All Addresses
+      tags:
+      - Address
+    post:
+      consumes:
+      - application/json
+      description: Create a Address
+      parameters:
+      - description: Address object
+        in: body
+        name: Address
+        required: true
+        schema:
+          $ref: '#/definitions/address.Address'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      summary: Create a Address
+      tags:
+      - Address
+  /address/{id}:
+    delete:
+      description: Delete a Address by ID
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+      summary: Delete a Address
+      tags:
+      - Address
+    get:
+      description: Get a Address by ID
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/address.Address'
+      summary: Get a Address by ID
+      tags:
+      - Address
+    put:
+      consumes:
+      - application/json
+      description: Update a Address by ID
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Address object
+        in: body
+        name: Address
+        required: true
+        schema:
+          $ref: '#/definitions/address.Address'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Update a Address
+      tags:
+      - Address
+  /address/search:
+    get:
+      description: Search address
+      parameters:
+      - description: Search keyword
+        in: query
+        name: keyword
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/address.Address'
+            type: array
+      summary: Search address
+      tags:
+      - Address
+  /chat2/:
+    get:
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: Path for chat realtime
+          schema:
+            type: string
+      summary: Get chat for chat realtime
+      tags:
+      - Chat RealTime
+  /chat2/path:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Path for chat realtime
+          schema:
+            type: string
+      summary: Get Path for chat realtime
+      tags:
+      - Chat RealTime
+  /redis/cache:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Key for the value
+        in: query
+        name: key
+        required: true
+        type: string
+      - description: Value to be cached
+        in: query
+        name: value
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Value cached successfully
+          schema:
+            type: string
+      summary: Cache a value
+      tags:
+      - Redis Cache MEMORY
+  /redis/get:
+    get:
+      parameters:
+      - description: Key to fetch from cache
+        in: query
+        name: key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Value from cache
+          schema:
+            type: string
+      summary: Get value from cache
+      tags:
+      - Redis Cache MEMORY
+  /redis/getAll:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: All keys with their values
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all keys with their values from cache
+      tags:
+      - Redis Cache MEMORY
+  /redis/remove:
+    delete:
+      parameters:
+      - description: Key to remove from cache
+        in: query
+        name: key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Value removed successfully
+          schema:
+            type: string
+      summary: Remove a value from cache
+      tags:
+      - Redis Cache MEMORY
+  /redis/removeAll:
+    delete:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: All keys removed successfully
+          schema:
+            type: string
+      summary: Remove all keys from cache
+      tags:
+      - Redis Cache MEMORY
+  /redis/search:
+    get:
+      parameters:
+      - description: Pattern to search for (e.g., 'prefix:*' or '*suffix')
+        in: query
+        name: pattern
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of keys matching the pattern
+          schema:
+            items:
+              type: string
+            type: array
+      summary: Search for keys matching a pattern
+      tags:
+      - Redis Cache MEMORY
+  /redis/update:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Key for the value
+        in: query
+        name: key
+        required: true
+        type: string
+      - description: New value
+        in: query
+        name: value
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Value updated successfully
+          schema:
+            type: string
+      summary: Update a value in cache
+      tags:
+      - Redis Cache MEMORY
   /users:
     delete:
       description: Remove all users from the database
@@ -25,6 +335,8 @@ paths:
         "204":
           description: No Content
       summary: Remove all users
+      tags:
+      - User
     get:
       description: Get all users
       produces:
@@ -37,6 +349,8 @@ paths:
               $ref: '#/definitions/user.User'
             type: array
       summary: Get all users
+      tags:
+      - User
     post:
       consumes:
       - application/json
@@ -54,6 +368,8 @@ paths:
         "201":
           description: Created
       summary: Create a user
+      tags:
+      - User
   /users/{id}:
     delete:
       description: Delete a user by ID
@@ -67,6 +383,8 @@ paths:
         "200":
           description: OK
       summary: Delete a user
+      tags:
+      - User
     get:
       description: Get a user by ID
       parameters:
@@ -83,6 +401,8 @@ paths:
           schema:
             $ref: '#/definitions/user.User'
       summary: Get a user by ID
+      tags:
+      - User
     put:
       consumes:
       - application/json
@@ -105,6 +425,8 @@ paths:
         "200":
           description: OK
       summary: Update a user
+      tags:
+      - User
   /users/search:
     get:
       description: Search users by username or email
@@ -124,4 +446,15 @@ paths:
               $ref: '#/definitions/user.User'
             type: array
       summary: Search users
+      tags:
+      - User
+  /ws:
+    get:
+      description: Upgrade HTTP connection to websocket and handle incoming messages
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Handle websocket connection
 swagger: "2.0"

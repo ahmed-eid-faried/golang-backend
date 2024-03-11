@@ -15,11 +15,441 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/address": {
+            "get": {
+                "description": "Get all Addresses",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Get All Addresses",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/address.Address"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a Address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Create a Address",
+                "parameters": [
+                    {
+                        "description": "Address object",
+                        "name": "Address",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/address.Address"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Remove all Addresses from the database",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Remove all Address",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/address/search": {
+            "get": {
+                "description": "Search address",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Search address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search keyword",
+                        "name": "keyword",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/address.Address"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/address/{id}": {
+            "get": {
+                "description": "Get a Address by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Get a Address by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Address ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/address.Address"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update a Address by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Update a Address",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Address ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Address object",
+                        "name": "Address",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/address.Address"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a Address by ID",
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Delete a Address",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Address ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/chat2/": {
+            "get": {
+                "produces": [
+                    "text/html"
+                ],
+                "tags": [
+                    "Chat RealTime"
+                ],
+                "summary": "Get chat for chat realtime",
+                "responses": {
+                    "200": {
+                        "description": "Path for chat realtime",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/chat2/path": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Chat RealTime"
+                ],
+                "summary": "Get Path for chat realtime",
+                "responses": {
+                    "200": {
+                        "description": "Path for chat realtime",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/redis/cache": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Redis Cache MEMORY"
+                ],
+                "summary": "Cache a value",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Key for the value",
+                        "name": "key",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Value to be cached",
+                        "name": "value",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Value cached successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/redis/get": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Redis Cache MEMORY"
+                ],
+                "summary": "Get value from cache",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Key to fetch from cache",
+                        "name": "key",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Value from cache",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/redis/getAll": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Redis Cache MEMORY"
+                ],
+                "summary": "Get all keys with their values from cache",
+                "responses": {
+                    "200": {
+                        "description": "All keys with their values",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/redis/remove": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Redis Cache MEMORY"
+                ],
+                "summary": "Remove a value from cache",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Key to remove from cache",
+                        "name": "key",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Value removed successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/redis/removeAll": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Redis Cache MEMORY"
+                ],
+                "summary": "Remove all keys from cache",
+                "responses": {
+                    "200": {
+                        "description": "All keys removed successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/redis/search": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Redis Cache MEMORY"
+                ],
+                "summary": "Search for keys matching a pattern",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Pattern to search for (e.g., 'prefix:*' or '*suffix')",
+                        "name": "pattern",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of keys matching the pattern",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/redis/update": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Redis Cache MEMORY"
+                ],
+                "summary": "Update a value in cache",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Key for the value",
+                        "name": "key",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "New value",
+                        "name": "value",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Value updated successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "description": "Get all users",
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "User"
                 ],
                 "summary": "Get all users",
                 "responses": {
@@ -41,6 +471,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "User"
                 ],
                 "summary": "Create a user",
                 "parameters": [
@@ -65,6 +498,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "User"
+                ],
                 "summary": "Remove all users",
                 "responses": {
                     "204": {
@@ -78,6 +514,9 @@ const docTemplate = `{
                 "description": "Search users by username or email",
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "User"
                 ],
                 "summary": "Search users",
                 "parameters": [
@@ -108,6 +547,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "User"
+                ],
                 "summary": "Get a user by ID",
                 "parameters": [
                     {
@@ -134,6 +576,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "User"
                 ],
                 "summary": "Update a user",
                 "parameters": [
@@ -162,6 +607,9 @@ const docTemplate = `{
             },
             "delete": {
                 "description": "Delete a user by ID",
+                "tags": [
+                    "User"
+                ],
                 "summary": "Delete a user",
                 "parameters": [
                     {
@@ -178,9 +626,68 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/ws": {
+            "get": {
+                "description": "Upgrade HTTP connection to websocket and handle incoming messages",
+                "summary": "Handle websocket connection",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "address.Address": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "type": "string",
+                    "example": "Example City"
+                },
+                "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "example": 1
+                },
+                "postal_code": {
+                    "type": "string",
+                    "example": "12345"
+                },
+                "state": {
+                    "type": "string",
+                    "example": "Example State"
+                },
+                "street": {
+                    "type": "string",
+                    "example": "123 Example St."
+                },
+                "user_id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "example": 1
+                }
+            }
+        },
+        "message.User": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "user.User": {
             "type": "object",
             "properties": {

@@ -20,7 +20,7 @@ type User struct {
 }
 
 // InitDataBase initializes the database tables and generates fake and provided users.
-func InitDataUsers() {
+func InitData() {
 	// Create the users table if it doesn't exist
 	sqldb.CreateTable("users", "id SERIAL PRIMARY KEY, username VARCHAR(255), email VARCHAR(255)")
 

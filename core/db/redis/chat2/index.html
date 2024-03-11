@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #messages {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #e6e6e6;
+            border-radius: 8px;
+        }
+
+        .message p {
+            margin: 0;
+        }
+
+        .message strong {
+            font-weight: bold;
+        }
+
+        #messageInput {
+            width: calc(100% - 100px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        #sendButton {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #sendButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="messages"></div>
+    <div>
+        <input type="text" id="messageInput" placeholder="Type your message...">
+        <button id="sendButton">Send</button>
+    </div>
+
+    <script>
+        const socket = new WebSocket("ws://localhost:8081/ws");
+
+        socket.onmessage = function(event) {
+            const message = JSON.parse(event.data);
+            const messagesDiv = document.getElementById("messages");
+            const messageContainer = document.createElement("div");
+            messageContainer.className = "message";
+            messageContainer.innerHTML = `<p><strong>${message.username}</strong>: ${message.text}</p>`;
+            messagesDiv.appendChild(messageContainer);
+        };
+
+        document.getElementById("sendButton").addEventListener("click", function() {
+            sendMessage();
+        });
+
+        document.getElementById("messageInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const messageInput = document.getElementById("messageInput");
+            const message = messageInput.value.trim();
+            if (message !== "") {
+                socket.send(JSON.stringify({ text: message }));
+                messageInput.value = "";
+            }
+        }
+    </script>
+</body>
+</html>
