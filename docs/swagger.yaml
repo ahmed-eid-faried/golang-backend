@@ -23,13 +23,25 @@ definitions:
         format: int32
         type: integer
     type: object
-  message.User:
+  addressmongodb.Address:
     properties:
-      email:
+      city:
+        example: Example City
         type: string
       id:
-        type: integer
-      username:
+        description: ID         int    `json:"id" example:"1" format:"int32"`
+        type: string
+      postal_code:
+        example: "12345"
+        type: string
+      state:
+        example: Example State
+        type: string
+      street:
+        example: 123 Example St.
+        type: string
+      user_id:
+        example: "1"
         type: string
     type: object
   user.User:
@@ -170,6 +182,128 @@ paths:
       summary: Search address
       tags:
       - Address
+  /addressMongodb:
+    delete:
+      description: Remove all Addresses from the database
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      summary: Remove all Address
+      tags:
+      - Address Mongodb
+    get:
+      description: Get all Addresses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/addressmongodb.Address'
+            type: array
+      summary: Get All Addresses
+      tags:
+      - Address Mongodb
+    post:
+      consumes:
+      - application/json
+      description: Create a Address
+      parameters:
+      - description: Address object
+        in: body
+        name: Address
+        required: true
+        schema:
+          $ref: '#/definitions/addressmongodb.Address'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      summary: Create a Address
+      tags:
+      - Address Mongodb
+  /addressMongodb/{id}:
+    delete:
+      description: Delete a Address by ID
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      summary: Delete a Address
+      tags:
+      - Address Mongodb
+    get:
+      description: Get a Address by ID
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/addressmongodb.Address'
+      summary: Get a Address by ID
+      tags:
+      - Address Mongodb
+    put:
+      consumes:
+      - application/json
+      description: Update a Address by ID
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Address object
+        in: body
+        name: Address
+        required: true
+        schema:
+          $ref: '#/definitions/addressmongodb.Address'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Update a Address
+      tags:
+      - Address Mongodb
+  /addressMongodb/search:
+    get:
+      description: Search address
+      parameters:
+      - description: Search keyword
+        in: query
+        name: keyword
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/addressmongodb.Address'
+            type: array
+      summary: Search address
+      tags:
+      - Address Mongodb
   /chat2/:
     get:
       produces:

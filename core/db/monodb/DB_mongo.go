@@ -1,4 +1,4 @@
-package mono
+package mongodb
 
 import (
 	"context"
@@ -9,20 +9,23 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Init initializes the MongoDB connection
+// Init initializes the Mongodb connection
 
 var (
-	client *mongo.Client
-	db     *mongo.Database
+	Client *mongo.Client
+	DB     *mongo.Database
+	// DBColl *mongo.Collection
+	MonHelper *MongoDBHelper
 )
+//  dbName :="goblog"
 
-func Init() {
-	// Set client options
+// Init initializes the MongoDB connection
+func KInit() {
+	// Set Client options
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
 
 	// Connect to MongoDB
-	var err error
-	client, err = mongo.Connect(context.Background(), clientOptions)
+	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
 		log.Fatalf("Error connecting to MongoDB: %v", err)
 	}
@@ -33,42 +36,61 @@ func Init() {
 		log.Fatalf("Error pinging MongoDB: %v", err)
 	}
 
-	db = client.Database("goblog") // Specify the database name
+	DB = client.Database("goblog") // Specify the database name
+
+	log.Println("Connected to MongoDB")
+}
+func Init() {
+	// Set Client options
+	ClientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+
+	// Connect to MongoDB
+	var err error
+	Client, err = mongo.Connect(context.Background(), ClientOptions)
+	if err != nil {
+		log.Fatalf("Error connecting to MongoDB: %v", err)
+	}
+
+	// Check the connection
+	err = Client.Ping(context.Background(), nil)
+	if err != nil {
+		log.Fatalf("Error pinging MongoDB: %v", err)
+	}
+
+	DB = Client.Database("goblog") // Specify the database name
 }
 
 // Create inserts a new document into the specified collection
 func Create(collectionName string, document interface{}) error {
-	collection := db.Collection(collectionName)
+	collection := DB.Collection(collectionName)
 	_, err := collection.InsertOne(context.Background(), document)
 	return err
 }
 
 // Add inserts multiple documents into the specified collection
 func Add(collectionName string, documents []interface{}) error {
-	collection := db.Collection(collectionName)
+	collection := DB.Collection(collectionName)
 	_, err := collection.InsertMany(context.Background(), documents)
 	return err
 }
 
 // Delete deletes documents from the specified collection based on the filter
 func Delete(collectionName string, filter bson.M) error {
-	collection := db.Collection(collectionName)
+	collection := DB.Collection(collectionName)
 	_, err := collection.DeleteMany(context.Background(), filter)
 	return err
 }
 
-
 // Update updates documents in the specified collection based on the filter
 func Update(collectionName string, filter bson.M, update bson.M) error {
-	collection := db.Collection(collectionName)
+	collection := DB.Collection(collectionName)
 	_, err := collection.UpdateMany(context.Background(), filter, update)
 	return err
 }
 
-
 // Max finds the maximum value for the specified field in the collection
 func Max(collectionName, fieldName string) (interface{}, error) {
-	collection := db.Collection(collectionName)
+	collection := DB.Collection(collectionName)
 	opts := options.FindOne().SetSort(bson.D{{Key: fieldName, Value: -1}})
 	var result bson.M
 	if err := collection.FindOne(context.Background(), bson.D{}, opts).Decode(&result); err != nil {
@@ -79,7 +101,7 @@ func Max(collectionName, fieldName string) (interface{}, error) {
 
 // Min finds the minimum value for the specified field in the collection
 func Min(collectionName, fieldName string) (interface{}, error) {
-	collection := db.Collection(collectionName)
+	collection := DB.Collection(collectionName)
 	opts := options.FindOne().SetSort(bson.D{{Key: fieldName, Value: 1}})
 	var result bson.M
 	if err := collection.FindOne(context.Background(), bson.D{}, opts).Decode(&result); err != nil {
@@ -90,7 +112,7 @@ func Min(collectionName, fieldName string) (interface{}, error) {
 
 // GroupBy groups documents in the collection based on the specified field
 func GroupBy(collectionName string, field string) ([]bson.M, error) {
-	collection := db.Collection(collectionName)
+	collection := DB.Collection(collectionName)
 	pipeline := []bson.M{
 		{"$group": bson.M{"_id": "$" + field, "count": bson.M{"$sum": 1}}},
 	}
@@ -109,7 +131,7 @@ func GroupBy(collectionName string, field string) ([]bson.M, error) {
 
 // OrderBy retrieves documents from the specified collection ordered by the specified field
 func OrderBy(collectionName, fieldName string, desc bool) ([]bson.M, error) {
-	collection := db.Collection(collectionName)
+	collection := DB.Collection(collectionName)
 	order := 1
 	if desc {
 		order = -1
@@ -194,7 +216,7 @@ func Search(collectionName string, searchQuery interface{}) ([]bson.M, error) {
 
 // // Search retrieves documents from the specified collection based on the filter
 // func Search(collectionName string, filter bson.M) ([]bson.M, error) {
-//     collection := db.Collection(collectionName)
+//     collection := DB.Collection(collectionName)
 //     cur, err := collection.Find(context.Background(), filter)
 //     if err != nil {
 //         return nil, err
@@ -213,7 +235,7 @@ func Search(collectionName string, searchQuery interface{}) ([]bson.M, error) {
 // }
 
 func runAggregation(databaseName, collectionName string, pipeline mongo.Pipeline) ([]bson.M, error) {
-	cur, err := client.Database(databaseName).Collection(collectionName).Aggregate(context.Background(), pipeline)
+	cur, err := Client.Database(databaseName).Collection(collectionName).Aggregate(context.Background(), pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -236,13 +258,13 @@ var kdatabaseName string = "goblog"
 // SetSchemaValidation sets schema validation rules for a collection
 //
 //	func SetSchemaValidation(collectionName string, validationRules interface{}) error {
-//		coll := client.Database(kdatabaseName).Collection(collectionName)
+//		coll := Client.Database(kdatabaseName).Collection(collectionName)
 //		opts := options.Collection().
 //			SetValidator(validationRules)
 //		if err := coll.Drop(context.Background()); err != nil { // Drop the collection if it exists
 //			return err
 //		}
-//		if err := client.Database(kdatabaseName).CreateCollection(context.Background(), collectionName, opts); err != nil {
+//		if err := Client.Database(kdatabaseName).CreateCollection(context.Background(), collectionName, opts); err != nil {
 //			return err
 //		}
 //		return nil
@@ -254,7 +276,7 @@ var kdatabaseName string = "goblog"
 // 	opts.Validator = validationRules
 
 //		// Create the collection with validation rules
-//		err := db.CreateCollection(context.Background(), collectionName, opts)
+//		err := DB.CreateCollection(context.Background(), collectionName, opts)
 //		return err
 //	}
 //
@@ -264,13 +286,13 @@ func SetSchemaValidation(collectionName string, validationRules interface{}) err
 	opts.Validator = validationRules
 
 	// Create the collection with validation rules
-	err := db.CreateCollection(context.Background(), collectionName, opts)
+	err := DB.CreateCollection(context.Background(), collectionName, opts)
 	return err
 }
 
 // Function to retrieve all documents from the specified collection
 func ViewAll(collectionName string) ([]interface{}, error) {
-	collection := db.Collection(collectionName)
+	collection := DB.Collection(collectionName)
 	cur, err := collection.Find(context.Background(), bson.M{})
 	if err != nil {
 		return nil, err
@@ -291,7 +313,7 @@ func ViewAll(collectionName string) ([]interface{}, error) {
 
 // Function to retrieve a single document from the specified collection based on the filter
 func View(collectionName string, filter bson.M) (interface{}, error) {
-	collection := db.Collection(collectionName)
+	collection := DB.Collection(collectionName)
 	var result interface{}
 	err := collection.FindOne(context.Background(), filter).Decode(&result)
 	return result, err

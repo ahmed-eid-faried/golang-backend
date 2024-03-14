@@ -3,6 +3,7 @@ package main
 import (
 	// sqldb "main/core/db/sql"
 	address "main/features/address"
+	addressmongodb "main/features/addressmongodb"
 	user "main/features/user"
 )
 
@@ -12,6 +13,7 @@ import (
 func InitDataBase() error {
 	user.InitData()
 	address.InitData()
+	addressmongodb.InitData()
 
 	// sqldb.AddRelation("users", "id", "addresses", "user_id")
 

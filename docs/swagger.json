@@ -194,6 +194,191 @@
                 }
             }
         },
+        "/addressMongodb": {
+            "get": {
+                "description": "Get all Addresses",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Address Mongodb"
+                ],
+                "summary": "Get All Addresses",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/addressmongodb.Address"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a Address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Address Mongodb"
+                ],
+                "summary": "Create a Address",
+                "parameters": [
+                    {
+                        "description": "Address object",
+                        "name": "Address",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/addressmongodb.Address"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Remove all Addresses from the database",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Address Mongodb"
+                ],
+                "summary": "Remove all Address",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/addressMongodb/search": {
+            "get": {
+                "description": "Search address",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Address Mongodb"
+                ],
+                "summary": "Search address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search keyword",
+                        "name": "keyword",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/addressmongodb.Address"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/addressMongodb/{id}": {
+            "get": {
+                "description": "Get a Address by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Address Mongodb"
+                ],
+                "summary": "Get a Address by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Address ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/addressmongodb.Address"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update a Address by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Address Mongodb"
+                ],
+                "summary": "Update a Address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Address ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Address object",
+                        "name": "Address",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/addressmongodb.Address"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a Address by ID",
+                "tags": [
+                    "Address Mongodb"
+                ],
+                "summary": "Delete a Address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Address ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/chat2/": {
             "get": {
                 "produces": [
@@ -668,17 +853,32 @@
                 }
             }
         },
-        "message.User": {
+        "addressmongodb.Address": {
             "type": "object",
             "properties": {
-                "email": {
-                    "type": "string"
+                "city": {
+                    "type": "string",
+                    "example": "Example City"
                 },
                 "id": {
-                    "type": "integer"
-                },
-                "username": {
+                    "description": "ID         int    `json:\"id\" example:\"1\" format:\"int32\"`",
                     "type": "string"
+                },
+                "postal_code": {
+                    "type": "string",
+                    "example": "12345"
+                },
+                "state": {
+                    "type": "string",
+                    "example": "Example State"
+                },
+                "street": {
+                    "type": "string",
+                    "example": "123 Example St."
+                },
+                "user_id": {
+                    "type": "string",
+                    "example": "1"
                 }
             }
         },

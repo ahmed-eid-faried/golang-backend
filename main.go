@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	swaggerFiles "github.com/swaggo/files"
@@ -14,8 +16,11 @@ import (
 	conRedis "main/features/addressRedis"
 
 	// chat "main/features/chat"
+	addressmongodb "main/features/addressmongodb"
 	conUser "main/features/user"
 )
+
+// addressmongodb "main/features/addressmongodb"
 
 // 	redisChat "main/core/db/redis/chat"
 
@@ -30,6 +35,22 @@ func main() {
 	InitDataBase()
 	router := gin.Default()
 	router.Static("/docs", "./docs")
+	// router.Static("/core/views/", "./core/views")
+	// // Set the templates directory
+	// router.LoadHTMLGlob(filepath.Join("./templates", "*.html"))
+	// Set the directory to serve static files (HTML, CSS, JS, etc.)
+	router.Static("/static", "./static")
+	// Define your routes
+	router.GET("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "Hello, World!")
+	})
+
+	// Handle 404 errors
+	router.NoRoute(func(c *gin.Context) {
+		// Set the status code to 404
+		// c.JSON(http.StatusNotFound, gin.H{"message": "Page not found"})
+		c.File("./templates/404.html")
+	})
 	v1 := router.Group("/api/v1")
 	{
 		// Grouping routes related to user management
@@ -55,6 +76,18 @@ func main() {
 			address.GET("/search", conAddress.SearchAddresses)
 			address.DELETE("/:id", conAddress.DeleteAddress)
 			address.DELETE("/", conAddress.DeleteAllAddresses)
+		}
+		// Grouping routes related to address management Mongodb
+		addressMongo := v1.Group("/addressMongodb")
+		{
+			// Address routes
+			addressMongo.POST("/", addressmongodb.CreateAddress)
+			addressMongo.PUT("/:id", addressmongodb.UpdateAddress)
+			addressMongo.GET("/:id", addressmongodb.GetAddressByID)
+			addressMongo.GET("", addressmongodb.GetAddresses)
+			addressMongo.GET("/search", addressmongodb.SearchAddresses)
+			addressMongo.DELETE("/:id", addressmongodb.DeleteAddress)
+			addressMongo.DELETE("/", addressmongodb.DeleteAllAddresses)
 		}
 
 		redis.Example()

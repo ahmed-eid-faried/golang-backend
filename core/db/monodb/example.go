@@ -1,12 +1,9 @@
-package mono
+package mongodb
 
 import (
-	"context"
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func main() {
@@ -78,7 +75,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Group Results:", groupResults,groupStage)
+	log.Println("Group Results:", groupResults, groupStage)
 
 	// Example: Order by name in descending order
 	orderByResults, err := OrderBy("users", "name", true)
@@ -106,27 +103,6 @@ func main() {
 	}
 
 	log.Println("Schema validation set for 'address' collection.")
-}
-
-// Init initializes the MongoDB connection
-func KInit() {
-	// Set client options
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
-
-	// Connect to MongoDB
-	var err error
-	client, err = mongo.Connect(context.Background(), clientOptions)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Check the connection
-	err = client.Ping(context.Background(), nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	db = client.Database("goblog") // Specify the database name
 }
 
 // Your CRUD and aggregation functions...
