@@ -17,8 +17,11 @@ import (
 
 	// chat "main/features/chat"
 	addressmongodb "main/features/addressmongodb"
+	conStripe "main/features/payment/stripe"
 	conUser "main/features/user"
 )
+
+// 	conStripe "main/features/payment/stripe"
 
 // addressmongodb "main/features/addressmongodb"
 
@@ -33,6 +36,9 @@ func main() {
 	sqldb.Init()
 	// chat.InitializeRedis()
 	InitDataBase()
+	conStripe.Init()
+	// conStripe.AuthMiddleware()
+
 	router := gin.Default()
 	router.Static("/docs", "./docs")
 	// router.Static("/core/views/", "./core/views")
@@ -103,7 +109,16 @@ func main() {
 			redis.DELETE("/removeAll", conRedis.RemoveAllValues)
 			redis.GET("/search", conRedis.SearchKeys)
 		}
-
+		stripe := v1.Group("/stripe")
+		{
+			// Apply authentication middleware to all routes in the stripe group
+			stripe.Use(conStripe.AuthMiddleware())
+			stripe.POST("/create_customer", conStripe.CreateCustomer)
+			stripe.GET("/retrieve_customer/:id", conStripe.RetrieveCustomer)
+			stripe.POST("/create_payment_intent", conStripe.CreatePaymentIntent)
+			stripe.POST("/capture_payment", conStripe.CapturePayment)
+			stripe.POST("/refund_payment", conStripe.RefundPayment)
+		}
 	}
 
 	// Serve index.html

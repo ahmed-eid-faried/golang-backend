@@ -11,7 +11,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
+	core "main/core"
 	mongodb "main/core/db/monodb"
+
 	// model "main/core/gin/model"
 	_ "main/docs" // This is required for Swagger to find your documentation
 )
@@ -63,6 +65,7 @@ func GetAddressByID(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid address ID"})
 		return
 	}
+	core.Vilad(id)
 
 	err = mongodb.DB.Collection("address").FindOne(context.Background(), bson.M{"_id": objID}).Decode(&address)
 	if err != nil {
@@ -89,7 +92,7 @@ func CreateAddress(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
+	core.Vilad(address)
 	result, err := mongodb.DB.Collection("address").InsertOne(context.Background(), address)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating address"})
@@ -115,6 +118,8 @@ func UpdateAddress(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	core.Vilad(address)
+	core.Vilad(id)
 
 	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -140,6 +145,7 @@ func UpdateAddress(c *gin.Context) {
 // @Tags Address Mongodb
 func DeleteAddress(c *gin.Context) {
 	id := c.Param("id")
+	core.Vilad(id)
 
 	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -187,6 +193,7 @@ func SearchAddresses(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Search keyword is required"})
 		return
 	}
+	core.Vilad(keyword)
 
 	filter := bson.M{
 		"$or": []bson.M{

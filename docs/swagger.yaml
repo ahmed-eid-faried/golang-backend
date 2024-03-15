@@ -43,6 +43,12 @@ definitions:
       user_id:
         example: "1"
         type: string
+    required:
+    - city
+    - postal_code
+    - state
+    - street
+    - user_id
     type: object
   user.User:
     properties:
@@ -460,6 +466,107 @@ paths:
       summary: Update a value in cache
       tags:
       - Redis Cache MEMORY
+  /stripe/capture_payment:
+    post:
+      consumes:
+      - application/json
+      description: Capture a payment in Stripe
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "500":
+          description: error
+          schema:
+            type: string
+      summary: Capture payment
+      tags:
+      - Stripe Payment
+  /stripe/create_customer:
+    post:
+      consumes:
+      - application/json
+      description: Create a new customer in Stripe
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: customer_id
+          schema:
+            type: string
+        "500":
+          description: error
+          schema:
+            type: string
+      summary: Create a new customer
+      tags:
+      - Stripe Payment
+  /stripe/create_payment_intent:
+    post:
+      consumes:
+      - application/json
+      description: Create a payment intent in Stripe
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "500":
+          description: error
+          schema:
+            type: string
+      summary: Create payment intent
+      tags:
+      - Stripe Payment
+  /stripe/refund_payment:
+    post:
+      consumes:
+      - application/json
+      description: Refund a payment in Stripe
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "500":
+          description: error
+          schema:
+            type: string
+      summary: Refund payment
+      tags:
+      - Stripe Payment
+  /stripe/retrieve_customer/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a customer from Stripe
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "500":
+          description: error
+          schema:
+            type: string
+      summary: Retrieve customer
+      tags:
+      - Stripe Payment
   /users:
     delete:
       description: Remove all users from the database

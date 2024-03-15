@@ -15,11 +15,11 @@ import (
 type Address struct {
 	// ID         int    `json:"id" example:"1" format:"int32"`
 	ID         string `json:"id" bson:"_id,omitempty"`
-	Street     string `json:"street" example:"123 Example St."`
-	City       string `json:"city" example:"Example City"`
-	State      string `json:"state" example:"Example State"`
-	PostalCode string `json:"postal_code" example:"12345"`
-	UserID     string `json:"user_id" example:"1"`
+	Street     string `json:"street" example:"123 Example St."  validate:"required"`
+	City       string `json:"city" example:"Example City" validate:"required"`
+	State      string `json:"state" example:"Example State" validate:"required"`
+	PostalCode string `json:"postal_code" example:"12345" validate:"required"`
+	UserID     string `json:"user_id" example:"1" validate:"required"`
 	// UserID     string `json:"user_id" example:"1" format:"int32"`
 }
 

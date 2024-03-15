@@ -621,6 +621,160 @@
                 }
             }
         },
+        "/stripe/capture_payment": {
+            "post": {
+                "description": "Capture a payment in Stripe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stripe Payment"
+                ],
+                "summary": "Capture payment",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/stripe/create_customer": {
+            "post": {
+                "description": "Create a new customer in Stripe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stripe Payment"
+                ],
+                "summary": "Create a new customer",
+                "responses": {
+                    "200": {
+                        "description": "customer_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/stripe/create_payment_intent": {
+            "post": {
+                "description": "Create a payment intent in Stripe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stripe Payment"
+                ],
+                "summary": "Create payment intent",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/stripe/refund_payment": {
+            "post": {
+                "description": "Refund a payment in Stripe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stripe Payment"
+                ],
+                "summary": "Refund payment",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/stripe/retrieve_customer/{id}": {
+            "get": {
+                "description": "Retrieve a customer from Stripe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stripe Payment"
+                ],
+                "summary": "Retrieve customer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Customer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "description": "Get all users",
@@ -855,6 +1009,13 @@
         },
         "addressmongodb.Address": {
             "type": "object",
+            "required": [
+                "city",
+                "postal_code",
+                "state",
+                "street",
+                "user_id"
+            ],
             "properties": {
                 "city": {
                     "type": "string",
