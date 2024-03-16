@@ -68,7 +68,7 @@ definitions:
       username:
         type: string
     type: object
-host: localhost:8080
+host: https://golang-backend-9yzj.onrender.com/
 info:
   contact: {}
   description: API for user management
