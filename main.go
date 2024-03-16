@@ -111,6 +111,11 @@ func main() {
 		}
 		stripe := v1.Group("/stripe")
 		{
+			// Initialize Stripe API key
+			// stripe.Key = "YOUR_API_KEY"
+
+			// Define routes
+			// stripe.POST("/api/v1/stripe/test_charge", conStripe.TestStripeCharge)
 			// Apply authentication middleware to all routes in the stripe group
 			stripe.Use(conStripe.AuthMiddleware())
 			stripe.POST("/create_customer", conStripe.CreateCustomer)
@@ -119,6 +124,16 @@ func main() {
 			stripe.POST("/capture_payment", conStripe.CapturePayment)
 			stripe.POST("/refund_payment", conStripe.RefundPayment)
 		}
+
+		// Set your Stripe API keys
+		// publishableKey := "pk_test_51Ngm3RGhokhcgA0sRWmKDxJDSld4r4je29GB4v1RGKLur8lJFrcLDql0Ahq1glDykEnShRyfvK9Cosi6GselKd5l00eXGHv5M9"
+		secretKey := "sk_test_51Ngm3RGhokhcgA0sLs7kgb0RX34VmN8tk8mJCq6oliiMX3Sxng0M4hCemz3Bikbd7K76Palkb9bbFndeTwWVE3lm00zHVsKwg0"
+
+		conStripe.SetAPIKey(secretKey)
+		// Define routes
+		v1.POST("/create_customer", conStripe.CreateCustomerHandler)
+		v1.GET("/get_customer/:id", conStripe.GetCustomerHandler)
+		v1.GET("/charge_customer/:id", conStripe.ChargeCustomer)
 	}
 
 	// Serve index.html

@@ -50,6 +50,15 @@ definitions:
     - street
     - user_id
     type: object
+  stripe.Req:
+    properties:
+      amount:
+        type: integer
+      currency:
+        type: string
+      customer_id:
+        type: string
+    type: object
   user.User:
     properties:
       email:
@@ -310,6 +319,35 @@ paths:
       summary: Search address
       tags:
       - Address Mongodb
+  /charge_customer/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a customer from Stripe
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Req object
+        in: body
+        name: Req
+        required: true
+        schema:
+          $ref: '#/definitions/stripe.Req'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "500":
+          description: error
+          schema:
+            type: string
+      summary: Retrieve a customer
   /chat2/:
     get:
       produces:
@@ -334,6 +372,56 @@ paths:
       summary: Get Path for chat realtime
       tags:
       - Chat RealTime
+  /create_customer:
+    post:
+      consumes:
+      - application/json
+      description: Create a new customer in Stripe
+      parameters:
+      - description: Email address of the customer
+        in: formData
+        name: email
+        required: true
+        type: string
+      - description: Account ID (optional)
+        in: formData
+        name: account_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: customer_id
+          schema:
+            type: string
+        "500":
+          description: error
+          schema:
+            type: string
+      summary: Create a new customer
+  /get_customer/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a customer from Stripe
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "500":
+          description: error
+          schema:
+            type: string
+      summary: Retrieve a customer
   /redis/cache:
     post:
       consumes:
