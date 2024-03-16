@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-
 	// "net/http"
 
 	// "github.com/bxcodec/faker/v3"

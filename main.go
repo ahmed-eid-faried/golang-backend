@@ -24,7 +24,7 @@ import (
 // @title User API
 // @description API for user management
 // @version 1.0
-// @host https://golang-backend-9yzj.onrender.com/
+// @host localhost:8080
 // @BasePath /api/v1
 func main() {
 	// chat.InitializeRedis()

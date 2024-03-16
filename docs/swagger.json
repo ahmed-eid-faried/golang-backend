@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "https://golang-backend-9yzj.onrender.com/",
+    "host": "localhost:8080",
     "basePath": "/api/v1",
     "paths": {
         "/address": {
