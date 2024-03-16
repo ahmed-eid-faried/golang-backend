@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+
 	// "net/http"
 
 	// "github.com/bxcodec/faker/v3"
@@ -24,7 +25,7 @@ func Init() {
 	dbUser := "amadytech_user"
 	dbPass := "UBp0KyiORwkldz92RWSNJ0Xaus6Xy86Q"
 	dbHost := "dpg-cnlfl4vsc6pc73cdbbb0-a"
-	// dbPort := 5432
+	dbPort := 5432
 	dbName := "amadytech"
 
 	// Internal Database URL
@@ -33,14 +34,14 @@ func Init() {
 	// connString := fmt.Sprintf("postgres://amadytech_user:UBp0KyiORwkldz92RWSNJ0Xaus6Xy86Q@dpg-cnlfl4vsc6pc73cdbbb0-a/amadytech")
 
 	// postgres://amadytech_user:UBp0KyiORwkldz92RWSNJ0Xaus6Xy86Q@dpg-cnlfl4vsc6pc73cdbbb0-a:5432/amadytech?sslmode=disable
-	// connString := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable", dbUser, dbPass, dbHost, dbPort, dbName)
+	connString := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable", dbUser, dbPass, dbHost, dbPort, dbName)
 
 	// External Database URL
 	// postgres://amadytech_user:UBp0KyiORwkldz92RWSNJ0Xaus6Xy86Q@dpg-cnlfl4vsc6pc73cdbbb0-a.frankfurt-postgres.render.com/amadytech
 	// connString := fmt.Sprintf("postgres://amadytech_user:UBp0KyiORwkldz92RWSNJ0Xaus6Xy86Q@dpg-cnlfl4vsc6pc73cdbbb0-a.frankfurt-postgres.render.com/amadytech")
 
 	// Constructing connection string
-	connString := fmt.Sprintf("postgres://%s:%s@%s.frankfurt-postgres.render.com/%s", dbUser, dbPass, dbHost, dbName)
+	// connString := fmt.Sprintf("postgres://%s:%s@%s.frankfurt-postgres.render.com/%s", dbUser, dbPass, dbHost, dbName)
 
 	var err error
 
@@ -74,10 +75,6 @@ func Init() {
 	log.Println("Connected to the database")
 	defer rows.Close()
 }
-
-
-
-
 
 // var DB *sql.DB
 var err error
