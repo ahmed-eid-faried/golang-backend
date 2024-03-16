@@ -21,31 +21,23 @@ import (
 	conUser "main/features/user"
 )
 
-// 	conStripe "main/features/payment/stripe"
-
-// addressmongodb "main/features/addressmongodb"
-
-// 	redisChat "main/core/db/redis/chat"
-
 // @title User API
 // @description API for user management
 // @version 1.0
 // @host localhost:8080
 // @BasePath /api/v1
 func main() {
-	sqldb.Init()
 	// chat.InitializeRedis()
 	InitDataBase()
-	conStripe.Init()
+
 	// conStripe.AuthMiddleware()
 
 	router := gin.Default()
-	router.Static("/docs", "./docs")
-	// router.Static("/core/views/", "./core/views")
-	// // Set the templates directory
-	// router.LoadHTMLGlob(filepath.Join("./templates", "*.html"))
+
 	// Set the directory to serve static files (HTML, CSS, JS, etc.)
 	router.Static("/static", "./static")
+	router.Static("/docs", "./docs")
+
 	// Define your routes
 	router.GET("/", func(c *gin.Context) {
 		c.String(http.StatusOK, "Hello, World!")
@@ -57,6 +49,7 @@ func main() {
 		// c.JSON(http.StatusNotFound, gin.H{"message": "Page not found"})
 		c.File("./templates/404.html")
 	})
+
 	v1 := router.Group("/api/v1")
 	{
 		// Grouping routes related to user management
@@ -126,10 +119,7 @@ func main() {
 		}
 
 		// Set your Stripe API keys
-		// publishableKey := "pk_test_51Ngm3RGhokhcgA0sRWmKDxJDSld4r4je29GB4v1RGKLur8lJFrcLDql0Ahq1glDykEnShRyfvK9Cosi6GselKd5l00eXGHv5M9"
-		secretKey := "sk_test_51Ngm3RGhokhcgA0sLs7kgb0RX34VmN8tk8mJCq6oliiMX3Sxng0M4hCemz3Bikbd7K76Palkb9bbFndeTwWVE3lm00zHVsKwg0"
-
-		conStripe.SetAPIKey(secretKey)
+		conStripe.SetAPIKey()
 		// Define routes
 		v1.POST("/create_customer", conStripe.CreateCustomerHandler)
 		v1.GET("/get_customer/:id", conStripe.GetCustomerHandler)

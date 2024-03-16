@@ -22,7 +22,7 @@ type MongoDBHelper struct {
 	client *mongo.Client
 }
 
-var dbName string = "goblog"
+// var dbName string = "goblog"
 
 func NewMongoDBHelper(connectionString string) (*MongoDBHelper, error) {
 	clientOptions := options.Client().ApplyURI(connectionString)

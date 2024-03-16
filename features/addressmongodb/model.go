@@ -27,7 +27,7 @@ var CTX context.Context = context.Background()
 
 // InitData initializes the database collection and generates fake and provided addresses.
 func InitData() {
-	mongodb.KInit()
+	mongodb.InitMongoDB()
 	// var DBColl *mongo.Collection
 
 	// // Initialize MongoDB client and connect

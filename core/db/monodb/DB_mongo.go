@@ -12,37 +12,24 @@ import (
 // Init initializes the Mongodb connection
 
 var (
-	Client *mongo.Client
-	DB     *mongo.Database
 	// DBColl *mongo.Collection
+	Client    *mongo.Client
+	DB        *mongo.Database
 	MonHelper *MongoDBHelper
+	dbName    = "goblog"
+	// uri = "mongodb+srv://amadytech:<password>@cv.u4zecgd.mongodb.net/?retryWrites=true&w=majority&appName=cv"
+	remoteHost = "mongodb+srv://amadytech:G4ocyIxxqmxkPH2f@cv.u4zecgd.mongodb.net/?retryWrites=true&w=majority&appName=cv"
+	localHost  = "mongodb://localhost:27017"
 )
-//  dbName :="goblog"
 
-// Init initializes the MongoDB connection
-func KInit() {
+// InitMongoDB initializes the MongoDB connection based on the environment type
+func InitMongoDB() {
+	// Determine environment type
 	// Set Client options
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
-
-	// Connect to MongoDB
-	client, err := mongo.Connect(context.Background(), clientOptions)
-	if err != nil {
-		log.Fatalf("Error connecting to MongoDB: %v", err)
-	}
-
-	// Check the connection
-	err = client.Ping(context.Background(), nil)
-	if err != nil {
-		log.Fatalf("Error pinging MongoDB: %v", err)
-	}
-
-	DB = client.Database("goblog") // Specify the database name
-
-	log.Println("Connected to MongoDB")
-}
-func Init() {
-	// Set Client options
-	ClientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	// Use the SetServerAPIOptions() method to set the version of the Stable API on the client
+	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+	// Assuming state is set to remoteHost or localHost
+	ClientOptions := options.Client().ApplyURI(remoteHost).SetServerAPIOptions(serverAPI)
 
 	// Connect to MongoDB
 	var err error
@@ -57,8 +44,75 @@ func Init() {
 		log.Fatalf("Error pinging MongoDB: %v", err)
 	}
 
-	DB = Client.Database("goblog") // Specify the database name
+	DB = Client.Database(dbName) // Specify the database name
+	log.Println("Connected to MongoDB")
 }
+
+// // dbName :="goblog"
+// func KkInit() {
+// 	// Use the SetServerAPIOptions() method to set the version of the Stable API on the client
+// 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+// 	opts := options.Client().ApplyURI("mongodb+srv://amadytech:<G4ocyIxxqmxkPH2f>@cv.u4zecgd.mongodb.net/?retryWrites=true&w=majority&appName=cv").SetServerAPIOptions(serverAPI)
+
+// 	// Create a new client and connect to the server
+// 	client, err := mongo.Connect(context.TODO(), opts)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+
+// 	defer func() {
+// 		if err = client.Disconnect(context.TODO()); err != nil {
+// 			panic(err)
+// 		}
+// 	}()
+
+// 	// Send a ping to confirm a successful connection
+// 	if err := client.Database("admin").RunCommand(context.TODO(), bson.D{{"ping", 1}}).Err(); err != nil {
+// 		panic(err)
+// 	}
+// 	fmt.Println("Pinged your deployment. You successfully connected to MongoDB!")
+// }
+
+// // Init initializes the MongoDB connection
+// func KInit() {
+// 	// Set Client options
+// 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+
+// 	// Connect to MongoDB
+// 	client, err := mongo.Connect(context.Background(), clientOptions)
+// 	if err != nil {
+// 		log.Fatalf("Error connecting to MongoDB: %v", err)
+// 	}
+
+// 	// Check the connection
+// 	err = client.Ping(context.Background(), nil)
+// 	if err != nil {
+// 		log.Fatalf("Error pinging MongoDB: %v", err)
+// 	}
+
+// 	DB = client.Database("goblog") // Specify the database name
+
+// 	log.Println("Connected to MongoDB")
+// }
+// func Init() {
+// 	// Set Client options
+// 	ClientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+
+// 	// Connect to MongoDB
+// 	var err error
+// 	Client, err = mongo.Connect(context.Background(), ClientOptions)
+// 	if err != nil {
+// 		log.Fatalf("Error connecting to MongoDB: %v", err)
+// 	}
+
+// 	// Check the connection
+// 	err = Client.Ping(context.Background(), nil)
+// 	if err != nil {
+// 		log.Fatalf("Error pinging MongoDB: %v", err)
+// 	}
+
+// 	DB = Client.Database("goblog") // Specify the database name
+// }
 
 // Create inserts a new document into the specified collection
 func Create(collectionName string, document interface{}) error {

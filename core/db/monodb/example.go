@@ -6,9 +6,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func main() {
+func example() {
 	// Initialize the MongoDB connection
-	KInit()
+	InitMongoDB()
 
 	// Sample data
 	user := bson.M{"name": "John Doe", "age": 30}

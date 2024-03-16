@@ -216,7 +216,10 @@ func RefundPayment(c *gin.Context) {
 // stripe_custom.go
 
 // SetAPIKey sets the Stripe API key for authentication
-func SetAPIKey(secretKey string) {
+func SetAPIKey() {
+	// secretKey string
+	// publishableKey := "pk_test_51Ngm3RGhokhcgA0sRWmKDxJDSld4r4je29GB4v1RGKLur8lJFrcLDql0Ahq1glDykEnShRyfvK9Cosi6GselKd5l00eXGHv5M9"
+	secretKey := "sk_test_51Ngm3RGhokhcgA0sLs7kgb0RX34VmN8tk8mJCq6oliiMX3Sxng0M4hCemz3Bikbd7K76Palkb9bbFndeTwWVE3lm00zHVsKwg0"
 	stripe.Key = secretKey
 	// stripe.Key = publishableKey
 }
@@ -268,10 +271,10 @@ func GetCustomer(customerID string) (*stripe.Customer, error) {
 // }
 
 func StripeCustom() {
-	publishableKey := "pk_test_51Ngm3RGhokhcgA0sRWmKDxJDSld4r4je29GB4v1RGKLur8lJFrcLDql0Ahq1glDykEnShRyfvK9Cosi6GselKd5l00eXGHv5M9"
+	// publishableKey := "pk_test_51Ngm3RGhokhcgA0sRWmKDxJDSld4r4je29GB4v1RGKLur8lJFrcLDql0Ahq1glDykEnShRyfvK9Cosi6GselKd5l00eXGHv5M9"
 	// secretKey := "sk_test_51Ngm3RGhokhcgA0sLs7kgb0RX34VmN8tk8mJCq6oliiMX3Sxng0M4hCemz3Bikbd7K76Palkb9bbFndeTwWVE3lm00zHVsKwg0"
 
-	SetAPIKey(publishableKey)
+	SetAPIKey()
 
 	// Create a customer
 	customer, err := CreateCustomerFun("jenny.rosen@example.com", "")
