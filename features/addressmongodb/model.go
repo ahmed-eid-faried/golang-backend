@@ -72,7 +72,7 @@ func InitData() {
 	fakeAddresses := GenerateFakeAddresses(20)
 	_, err = mongodb.DB.Collection("address").InsertMany(CTX, fakeAddresses)
 	if err != nil {
-		log.Println("Error inserting fake addresses:", err)
+		log.Println("Error inserting fake address:", err)
 	}
 }
 

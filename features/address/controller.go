@@ -174,10 +174,10 @@ func SearchAddresses(c *gin.Context) {
 
 	// Query the database for addresses matching the keyword
 	var addresses []Address
-	rows, err := sqldb.DB.Query("SELECT * FROM addresses WHERE username ILIKE $1 OR email ILIKE $1", "%"+keyword+"%")
+	rows, err := sqldb.DB.Query("SELECT * FROM address WHERE street ILIKE $1 OR city ILIKE $1 OR state ILIKE $1 OR postal_code ILIKE $1 OR user_id ILIKE $1 OR id ILIKE $1", "%"+keyword+"%")
 	if err != nil {
-		log.Println("Error querying addresses:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error querying addresses"})
+		log.Println("Error querying address:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error querying address"})
 		return
 	}
 	defer rows.Close()
